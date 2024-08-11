@@ -30,14 +30,14 @@ export default function SignInPage() {
       {/* Centered Sign-In Form with Blur Background */}
       <div className="relative flex items-center justify-center min-h-screen">
         <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
-        <div className="relative bg-black bg-opacity-60 shadow-lg rounded-lg p-16 max-w-md w-full text-center z-10 flex flex-col items-center">
+        <div className="relative bg-black bg-opacity-70 shadow-lg rounded-lg p-16 max-w-md w-full text-center z-10 flex flex-col items-center">
           
-          <h1 className="text-4xl font-extrabold mb-10 text-red-600">Remind it!</h1>
+          <h1 className="text-5xl font-extrabold mb-10 text-red-700">Remind it!</h1>
           <button
             onClick={() => signIn('google')}
-            className="w-2/3 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
+            className="w-2/3 py-3 bg-white text-black font-bold rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
           >
-            <FontAwesomeIcon icon={faGoogle} className="text-white text-lg" />
+            <FontAwesomeIcon icon={faGoogle} className="text-red-600 text-lg" />
             <span>Sign in with Google</span>
           </button>
         </div>
