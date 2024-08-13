@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../lib/authOptions'; // Ensure this file exists and exports authOptions

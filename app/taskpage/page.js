@@ -1,6 +1,8 @@
+// pages/taskpage.js
+
 import { useState, useEffect } from 'react';
-import TaskForm from './TaskForm';
-import TaskList from './TaskList';
+import TaskForm from '../components/TaskForm';
+import TaskList from '../components/TaskList';
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState([]);
@@ -43,7 +45,6 @@ export default function TaskPage() {
       const result = await response.json();
       console.log('Task created successfully:', result);
 
-      // Refresh tasks list and show success message
       fetchTasks();
       setSuccessMessage('Task added successfully!');
       setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
@@ -54,8 +55,7 @@ export default function TaskPage() {
   };
 
   return (
-    <div>
-      <h1>Create a New Task</h1>
+    <div className="max-w-3xl mx-auto">
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       <TaskForm onSubmit={handleTaskSubmit} />
       <TaskList tasks={tasks} />

@@ -1,58 +1,77 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import Profile from '../components/Profile';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
+  const [tasks, setTasks] = useState([]);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchTasks();
+    }
+  }, [status]);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      setTasks([]);
+    }
+  };
+
+  const handleTaskSubmit = async (task) => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(task),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Task created successfully:', result);
+      fetchTasks();
+      setSuccessMessage('Task added successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
+  };
 
   if (status === 'loading') {
     return <p className="text-center text-gray-500">Loading...</p>;
   }
 
   if (!session) {
-    router.push('/signin');
-    return null;
+    return <p className="text-center text-gray-500">Please sign in</p>; // Handle unauthenticated state
   }
-
-  const addTask = async (task) => {
-    await fetch('/api/tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(task),
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      {/* Profile Section */}
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-sm mx-auto mb-8">
-        <div className="text-center">
-          <img
-            src={session.user.image}
-            alt="Profile Picture"
-            className="rounded-full w-24 h-24 mx-auto"
-          />
-          <h1 className="text-2xl font-semibold mt-4">{session.user.name}</h1>
-          <p className="text-gray-600">{session.user.email}</p>
-          <button
-            onClick={() => signOut()}
-            className="mt-6 w-full py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-
-      {/* Task Form and List */}
-      <div className="max-w-3xl mx-auto">
-        <TaskForm onSubmit={addTask} />
-        <TaskList />
+      <Profile />
+      {successMessage && (
+        <p className="text-green-500 text-center mb-4">{successMessage}</p>
+      )}
+      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <TaskForm onSubmit={handleTaskSubmit} />
+        <TaskList tasks={tasks} />
       </div>
     </div>
   );

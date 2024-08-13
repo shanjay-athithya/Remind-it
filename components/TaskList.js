@@ -1,43 +1,14 @@
-import { useState, useEffect } from 'react';
-
-export default function TaskList() {
-  const [tasks, setTasks] = useState([]);
-
-  const fetchTasks = async () => {
-    try {
-      const response = await fetch('/api/tasks');
-
-      // Check if the response is OK (status code 200-299)
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      // Check if the response is empty
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : [];
-      
-      setTasks(data);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      // Optionally set an empty state or handle errors in the UI
-      setTasks([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
+export default function TaskList({ tasks }) {
   return (
     <div>
       {tasks.length === 0 ? (
-        <p>No tasks found.</p>
+        <p className="text-center text-gray-600">No tasks found.</p>
       ) : (
-        <ul>
+        <ul className="space-y-4">
           {tasks.map((task) => (
-            <li key={task.id} className="border-b border-gray-300 py-2">
-              <h3 className="font-semibold">{task.title}</h3>
-              <p>{task.description}</p>
+            <li key={task.id} className="border border-gray-200 rounded-lg p-4 shadow-sm bg-white">
+              <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+              <p className="text-gray-600">{task.description}</p>
             </li>
           ))}
         </ul>
