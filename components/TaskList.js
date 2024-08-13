@@ -30,7 +30,18 @@ export default function TaskList() {
 
   return (
     <div>
-      {/* Render your tasks here */}
+      {tasks.length === 0 ? (
+        <p>No tasks found.</p>
+      ) : (
+        <ul>
+          {tasks.map((task) => (
+            <li key={task.id} className="border-b border-gray-300 py-2">
+              <h3 className="font-semibold">{task.title}</h3>
+              <p>{task.description}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
