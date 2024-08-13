@@ -81,8 +81,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Fixed Header */}
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+      {/* Header */}
       <header className="bg-red-600 text-white fixed top-0 left-0 w-full z-50 py-4 px-8 flex items-center justify-between">
         {/* Sidebar Toggle Button */}
         <button
@@ -103,13 +103,11 @@ export default function HomePage() {
       />
 
       {/* Main Content */}
-      <div
-        className={`flex-1 p-8 mt-16 transition-all duration-300 ease-in-out ${sidebarOpen ? 'ml-64' : ''}`}
-      >
-        <header className="mb-8">
-          <Profile />
-        </header>
-        <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <div className={`flex-1 p-8 mt-16 lg:mt-16 lg:pl-64 transition-all duration-300 ease-in-out ${sidebarOpen ? 'lg:ml-64' : ''}`}>
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full mx-auto">
+          <header className="mb-8">
+            <Profile />
+          </header>
           {successMessage && (
             <p className="text-green-500 text-center mb-4">{successMessage}</p>
           )}
