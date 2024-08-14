@@ -1,66 +1,98 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function TaskForm({ onSubmit }) {
+export default function TaskForm({ onSubmit, task }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [status, setStatus] = useState('To Do');
-  const [important, setImportant] = useState(false);
+  const [status, setStatus] = useState('Incomplete');
+  const [isImportant, setIsImportant] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title || '');
+      setDescription(task.description || '');
+      setDeadline(task.deadline || '');
+      setStatus(task.status || 'Incomplete');
+      setIsImportant(task.isImportant || false);
+    }
+  }, [task]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await onSubmit({ title, description, deadline, status, important });
-    setTitle('');
-    setDescription('');
-    setDeadline('');
-    setStatus('To Do');
-    setImportant(false);
+    if (new Date(deadline) < new Date()) {
+      alert('Deadline cannot be in the past.');
+      return;
+    }
+    onSubmit({
+      title,
+      description,
+      deadline,
+      status,
+      isImportant,
+      ...(task?.id ? { id: task.id } : {}), // Include id if editing
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
-      <input
-        type="date"
-        value={deadline}
-        onChange={(e) => setDeadline(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-      >
-        <option value="To Do">To Do</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
-      <label className="flex items-center space-x-3">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">Title</label>
         <input
-          type="checkbox"
-          checked={important}
-          onChange={(e) => setImportant(e.target.checked)}
-          className="form-checkbox h-5 w-5 text-red-600"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <span className="text-gray-700">Mark as Important</span>
-      </label>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">Deadline</label>
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          min={new Date().toISOString().split('T')[0]} // Disable past dates
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">Status</label>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="Incomplete">To Do</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+      <div className="mb-6">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={isImportant}
+            onChange={() => setIsImportant(!isImportant)}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+          <span className="ml-2 text-gray-700">Mark as Important</span>
+        </label>
+      </div>
       <button
         type="submit"
-        className="w-full py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors"
+        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        Add Task
+        {task ? 'Update Task' : 'Add Task'}
       </button>
     </form>
   );

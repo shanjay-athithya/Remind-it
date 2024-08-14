@@ -1,6 +1,14 @@
-import { FaBars, FaTimes } from 'react-icons/fa'; // Importing FontAwesome icons
+import { XCircle } from 'react-feather'; // Importing Feather Icons for a cool close icon
+import { FiPlusCircle } from 'react-icons/fi'; // Importing Feather Icon for the new task button
 
-export default function Sidebar({ onFilterChange, isOpen, closeSidebar }) {
+export default function Sidebar({ onFilterChange, isOpen, closeSidebar, openTaskModal }) {
+  const handleOptionClick = (filterOption) => {
+    onFilterChange(filterOption);
+    if (window.innerWidth < 1024) {
+      closeSidebar(); // Close sidebar on mobile screens after selecting an option
+    }
+  };
+
   return (
     <>
       {/* Sidebar for large screens */}
@@ -10,44 +18,55 @@ export default function Sidebar({ onFilterChange, isOpen, closeSidebar }) {
       >
         {/* Close Button for Large Screens */}
         <button
-          className="lg:hidden p-4 text-white absolute top-4 right-4"
+          className="lg:hidden p-4 text-white absolute right-2"
           onClick={closeSidebar}
         >
-          <FaTimes size={24} />
+          <XCircle size={24} /> {/* Using a cool Feather Icon */}
         </button>
+
         <div className="p-4 flex flex-col h-full">
+          {/* New Task Button for Large Screens */}
           <button 
-            onClick={() => onFilterChange('All')} 
-            className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
+            onClick={openTaskModal} // Opens the modal to add a new task
+            className="hidden lg:flex mb-4 py-3 px-4 bg-blue-500 text-left text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center"
+          >
+            <FiPlusCircle size={20} className="mr-2" /> {/* Feather Icon for New Task */}
+            New Task
+          </button>
+
+          {/* Sidebar Options */}
+          <button 
+            onClick={() => handleOptionClick('All')} 
+            className="mt-4 mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             All
           </button>
           <button 
-            onClick={() => onFilterChange('Important')} 
+            onClick={() => handleOptionClick('Important')} 
             className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             Important
           </button>
           <button 
-            onClick={() => onFilterChange('In Progress')} 
+            onClick={() => handleOptionClick('In Progress')} 
             className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             In Progress
           </button>
           <button 
-            onClick={() => onFilterChange('To Do')} 
+            onClick={() => handleOptionClick('To Do')} 
             className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             To Do
           </button>
           <button 
-            onClick={() => onFilterChange('Completed')} 
+            onClick={() => handleOptionClick('Completed')} 
             className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             Completed
           </button>
           <button 
-            onClick={() => onFilterChange('Incomplete')} 
+            onClick={() => handleOptionClick('Incomplete')} 
             className="mb-2 py-3 px-4 border-b border-gray-600 text-left hover:bg-gray-700 transition-colors"
           >
             Incomplete
@@ -55,7 +74,7 @@ export default function Sidebar({ onFilterChange, isOpen, closeSidebar }) {
         </div>
       </div>
 
-      {/* Close Button for Mobile Screens */}
+      {/* Close Button and New Task Button for Mobile Screens */}
       <div
         className={`fixed top-0 left-0 z-30 p-4 lg:hidden ${isOpen ? 'block' : 'hidden'}`}
         style={{ top: '3.5rem' }} // Adjust top to account for the fixed header height
@@ -64,7 +83,16 @@ export default function Sidebar({ onFilterChange, isOpen, closeSidebar }) {
           onClick={closeSidebar}
           className="text-white"
         >
-          <FaTimes size={24} />
+          <XCircle size={24} /> {/* Using a cool Feather Icon */}
+        </button>
+
+        {/* New Task Button for Mobile Screens */}
+        <button 
+          onClick={openTaskModal} // Opens the modal to add a new task
+          className="mt-4 py-3 px-4 bg-blue-500 text-left text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center"
+        >
+          <FiPlusCircle size={20} className="mr-2" /> {/* Feather Icon for New Task */}
+          New Task
         </button>
       </div>
     </>
