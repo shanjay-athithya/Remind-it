@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Profile from '../components/Profile';
 import TaskForm from '../components/TaskForm';
 import Sidebar from '../components/Sidebar';
-import TaskList from '../components/TaskList';
+import TaskList from '../components/TaskList';  // Make sure TaskList supports the three-column layout
 import Modal from '../components/Modal';
 import { FaBars, FaPlus } from 'react-icons/fa';
 
@@ -33,6 +33,31 @@ export default function HomePage() {
     }
   }, [status, session, router]);
 
+  useEffect(() => {
+    switch (filter) {
+      case 'All':
+        setHeading('All Tasks');
+        break;
+      case 'Incomplete':
+        setHeading('Incomplete Tasks');
+        break;
+      case 'In Progress':
+        setHeading('In Progress Tasks');
+        break;
+      case 'Completed':
+        setHeading('Completed Tasks');
+        break;
+      case 'To Do':
+        setHeading('To Do Tasks');
+        break;
+      case 'Important':
+        setHeading('Important Tasks');
+        break;
+      default:
+        setHeading('All Tasks');
+    }
+  }, [filter]);
+
   const fetchTasks = async () => {
     try {
       const response = await fetch('/api/tasks');
@@ -48,8 +73,8 @@ export default function HomePage() {
     } catch (error) {
       console.error('Error fetching tasks:', error);
       setTasks([]);
-      setErrorMessage('Failed to fetch tasks.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      setErrorMessage('Failed to fetch tasks. Please try again later.');
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -63,13 +88,13 @@ export default function HomePage() {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       fetchTasks();
       setSuccessMessage(task.id ? 'Task updated successfully!' : 'Task added successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      setTimeout(() => setSuccessMessage(''), 5000);
       setIsTaskFormModalOpen(false);
       setTaskToEdit(null);
     } catch (error) {
       console.error('Error saving task:', error);
-      setErrorMessage(task.id ? 'Failed to update task.' : 'Failed to add task.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      setErrorMessage(task.id ? 'Failed to update task. Please try again.' : 'Failed to add task. Please try again.');
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -78,9 +103,8 @@ export default function HomePage() {
     setIsTaskFormModalOpen(true);
   };
 
-  const handleFilterChange = (newFilter, newHeading) => {
+  const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
-    setHeading(newHeading);
   };
 
   if (status === 'loading') {
@@ -93,7 +117,8 @@ export default function HomePage() {
     if (filter === 'Incomplete') return task.status === 'Incomplete';
     if (filter === 'In Progress') return task.status === 'In Progress';
     if (filter === 'Completed') return task.status === 'Completed';
-    if (filter === 'Important') return task.important;
+    if (filter === 'To Do') return task.status === 'To Do';
+    if (filter === 'Important') return task.isImportant;
     return false;
   });
 
@@ -125,7 +150,24 @@ export default function HomePage() {
             </button>
           </div>
 
-          <TaskList tasks={filteredTasks} onEdit={handleEditTask} />
+          {filter === 'All' ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+                <h3 className="text-lg font-bold mb-2">To Do</h3>
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'To Do')} onEdit={handleEditTask} />
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+                <h3 className="text-lg font-bold mb-2">In Progress</h3>
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'In Progress')} onEdit={handleEditTask} />
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+                <h3 className="text-lg font-bold mb-2">Completed</h3>
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'Completed')} onEdit={handleEditTask} />
+              </div>
+            </div>
+          ) : (
+            <TaskList tasks={filteredTasks} onEdit={handleEditTask} />
+          )}
         </div>
       </div>
 
