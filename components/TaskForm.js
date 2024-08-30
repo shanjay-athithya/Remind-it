@@ -1,4 +1,4 @@
-
+"use state";
 
 import { useState, useEffect } from 'react';
 
