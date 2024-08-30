@@ -33,6 +33,10 @@ export default function TaskList({ tasks, onEdit, filter }) {
       // Fetch the updated list of tasks
       const tasksCollection = collection(db, 'tasks');
       const tasksSnapshot = await getDocs(tasksCollection);
+      const tasksList = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      // Update the state with the new list of tasks
+      categorizedTasks = tasksList; // Assume setTasks is a state setter function from useState
      
   
       
