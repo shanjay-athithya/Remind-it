@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
+import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore'; // Import Firestore functions
+import { db } from '/lib/firebase'; // Adjust the path according to your project structure
 
-export default function TaskList({ tasks, onEdit, onDelete, filter }) {
+export default function TaskList({ tasks, onEdit, filter }) {
   const [loadingTaskId, setLoadingTaskId] = useState(null);
 
   // Function to categorize tasks for the 'All' filter
@@ -22,6 +24,28 @@ export default function TaskList({ tasks, onEdit, onDelete, filter }) {
   };
 
   const categorizedTasks = categorizeTasks(tasks);
+
+  const handleDeleteTask = async (id) => {
+    try {
+      // Delete the task document from Firestore
+      await deleteDoc(doc(db, 'tasks', id));
+  
+      // Fetch the updated list of tasks
+      const tasksCollection = collection(db, 'tasks');
+      const tasksSnapshot = await getDocs(tasksCollection);
+      const tasksList = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      // Update the state with the new list of tasks
+      setTasks(tasksList); // Assume setTasks is a state setter function from useState
+  
+      // Show a success notification
+      showNotification('Task deleted successfully!', 'success'); // Assume showNotification is a function to display notifications
+    } catch (error) {
+      // Handle errors and show an error notification
+      console.error('Error deleting task:', error);
+      showNotification('Error deleting task!', 'error');
+    }
+  };
   
 
 
@@ -54,7 +78,7 @@ export default function TaskList({ tasks, onEdit, onDelete, filter }) {
                   </button>
                   <button
                     className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                    onClick={() => handleDeleteTask(task.id)} // Ensure task.id is correct here
                   >
                   Delete
                   </button>
@@ -89,7 +113,7 @@ export default function TaskList({ tasks, onEdit, onDelete, filter }) {
                   </button>
                   <button
                     className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                    onClick={() => handleDeleteTask(task.id)} // Ensure task.id is correct here
                   >
                   Delete
                   </button>
@@ -124,7 +148,7 @@ export default function TaskList({ tasks, onEdit, onDelete, filter }) {
                   </button>
                   <button
                     className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                    onClick={() => handleDeleteTask(task.id)} // Ensure task.id is correct here
                   >
                   Delete
                   </button>
@@ -162,7 +186,7 @@ export default function TaskList({ tasks, onEdit, onDelete, filter }) {
                   
                   <button
                     className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                    onClick={() => handleDeleteTask(task.id)} // Ensure task.id is correct here
                   >
                   Delete
                   </button>
