@@ -1,6 +1,6 @@
-"use client";
 
-import { deleteDoc } from 'firebase/firestore';
+
+
 import React, { useState } from 'react';
 
 export default function TaskList({ tasks, onEdit, onDelete, filter }) {
