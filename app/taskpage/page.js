@@ -1,8 +1,7 @@
-"use client";
 
 import React, { useState, useEffect } from 'react';
-import TaskForm from '../components/TaskForm';
-import TaskList from '../components/TaskList';
+import TaskForm from '../../components/TaskForm';
+import TaskList from '../../components/TaskList';
 import { deleteDoc, doc } from 'firebase/firestore'; // Ensure to import necessary Firestore functions
 import { db } from '../../../lib/firebase'; // 
 
