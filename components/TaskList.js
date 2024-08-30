@@ -33,7 +33,7 @@ export default function TaskList({ tasks, onEdit, filter }) {
       // Fetch the updated list of tasks
       const tasksCollection = collection(db, 'tasks');
       const tasksSnapshot = await getDocs(tasksCollection);
-      const tasksList = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+     
   
       
       console.error('Task deleted successfully!', 'success'); // Assume showNotification is a function to display notifications
