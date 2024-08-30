@@ -123,6 +123,3 @@ export async function DELETE(request) {
     return createResponse({ error: 'Failed to delete task' }, 500);
   }
 }
-
-
- 

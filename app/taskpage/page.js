@@ -60,13 +60,27 @@ export default function TaskPage() {
 
   const handleDelete = async (taskId) => {
     try {
-      console.log("Deleting task", taskId);
-      await deleteDoc(doc(db, "tasks", taskId)); // Delete the document from Firestore
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId)); // Remove task from local state
+      const response = await fetch(`/api/tasks`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: taskId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const result = await response.json();
+      console.log('Task deleted successfully:', result);
+  
+      // Update your UI or state to reflect the deletion
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   };
+  
   
   
 
