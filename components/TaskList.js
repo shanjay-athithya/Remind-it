@@ -35,15 +35,12 @@ export default function TaskList({ tasks, onEdit, filter }) {
       const tasksSnapshot = await getDocs(tasksCollection);
       const tasksList = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   
-      // Update the state with the new list of tasks
-      setTasks(tasksList); // Assume setTasks is a state setter function from useState
-  
-      // Show a success notification
-      showNotification('Task deleted successfully!', 'success'); // Assume showNotification is a function to display notifications
+      
+      console.error('Task deleted successfully!', 'success'); // Assume showNotification is a function to display notifications
     } catch (error) {
       // Handle errors and show an error notification
       console.error('Error deleting task:', error);
-      showNotification('Error deleting task!', 'error');
+      
     }
   };
   
