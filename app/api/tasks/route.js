@@ -92,4 +92,37 @@ export async function PUT(request) {
   }
 }
 
+// DELETE handler to delete a task
+export async function DELETE(request) {
+  try {
+    const { id } = await request.json(); // Extract task ID from request body
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return createResponse({ error: 'Unauthorized' }, 401);
+    }
+
+    const userId = session.user.email;
+    const taskDoc = doc(db, 'tasks', id);
+    const taskSnapshot = await getDoc(taskDoc);
+
+    if (!taskSnapshot.exists()) {
+      return createResponse({ error: 'Task not found' }, 404);
+    }
+
+    const taskData = taskSnapshot.data();
+    if (taskData.userId !== userId) {
+      return createResponse({ error: 'Unauthorized' }, 403);
+    }
+
+    await deleteDoc(taskDoc);
+
+    return createResponse({ message: 'Task deleted' }, 200);
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    return createResponse({ error: 'Failed to delete task' }, 500);
+  }
+}
+
+
  
