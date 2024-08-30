@@ -1,6 +1,10 @@
-import React from 'react';
+"use client";
+import { deleteDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
 
-export default function TaskList({ tasks, onEdit, filter }) {
+export default function TaskList({ tasks, onEdit, onDelete, filter }) {
+  const [loadingTaskId, setLoadingTaskId] = useState(null);
+
   // Function to categorize tasks for the 'All' filter
   const categorizeTasks = (tasks) => {
     return tasks.reduce((categories, task) => {
@@ -18,6 +22,8 @@ export default function TaskList({ tasks, onEdit, filter }) {
   };
 
   const categorizedTasks = categorizeTasks(tasks);
+  
+
 
   return (
     <div className="grid gap-4">
@@ -39,12 +45,21 @@ export default function TaskList({ tasks, onEdit, filter }) {
                 <p className={`mt-2 font-bold ${task.isImportant ? 'text-red-600' : 'text-gray-500'}`}>
                   {task.isImportant ? 'Important' : 'Not Important'}
                 </p>
-                <button
-                  className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-                  onClick={() => onEdit(task)}
-                >
-                  Edit
-                </button>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                    onClick={() => onEdit(task)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
+                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                  >
+                  Delete
+                  </button>
+
+                </div>
               </div>
             ))}
           </div>
@@ -65,13 +80,21 @@ export default function TaskList({ tasks, onEdit, filter }) {
                 <p className={`mt-2 font-bold ${task.isImportant ? 'text-red-600' : 'text-gray-500'}`}>
                   {task.isImportant ? 'Important' : 'Not Important'}
                 </p>
-                <button
-                  className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-                  onClick={() => onEdit(task)}
-                >
-                  Edit
-                </button>
-                
+                <div className="mt-4 flex gap-2">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                    onClick={() => onEdit(task)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
+                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                  >
+                  Delete
+                  </button>
+
+                </div>
               </div>
             ))}
           </div>
@@ -92,12 +115,21 @@ export default function TaskList({ tasks, onEdit, filter }) {
                 <p className={`mt-2 font-bold ${task.isImportant ? 'text-red-600' : 'text-gray-500'}`}>
                   {task.isImportant ? 'Important' : 'Not Important'}
                 </p>
-                <button
-                  className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-                  onClick={() => onEdit(task)}
-                >
-                  Edit
-                </button>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                    onClick={() => onEdit(task)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
+                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                  >
+                  Delete
+                  </button>
+
+                </div>
               </div>
             ))}
           </div>
@@ -120,12 +152,22 @@ export default function TaskList({ tasks, onEdit, filter }) {
                 <p className={`mt-2 font-bold ${task.isImportant ? 'text-red-600' : 'text-gray-500'}`}>
                   {task.isImportant ? 'Important' : 'Not Important'}
                 </p>
-                <button
-                  className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-                  onClick={() => onEdit(task)}
-                >
-                  Edit
-                </button>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                    onClick={() => onEdit(task)}
+                  >
+                    Edit
+                  </button>
+                  
+                  <button
+                    className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
+                    onClick={() => onDelete(task.id)} // Ensure task.id is correct here
+                  >
+                  Delete
+                  </button>
+
+                </div>
               </div>
             ))
           )}

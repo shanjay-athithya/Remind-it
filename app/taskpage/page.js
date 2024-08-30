@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
+import { deleteDoc, doc } from 'firebase/firestore'; // Ensure to import necessary Firestore functions
+import { db } from '../../../lib/firebase'; // 
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState([]);
@@ -55,11 +59,22 @@ export default function TaskPage() {
     setSelectedTask(task); // Set the selected task for editing
   };
 
+  const handleDelete = async (taskId) => {
+    try {
+      console.log("Deleting task", taskId);
+      await deleteDoc(doc(db, "tasks", taskId)); // Delete the document from Firestore
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId)); // Remove task from local state
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+  
+
   return (
     <div className="max-w-3xl mx-auto">
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       <TaskForm onSubmit={handleTaskSubmit} selectedTask={selectedTask} />
-      <TaskList tasks={tasks} onEdit={handleEditTask} />
+      <TaskList tasks={tasks} onEdit={handleEditTask} onDelete={handleDelete} />
     </div>
   );
 }

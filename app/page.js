@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Profile from '../components/Profile';
 import TaskForm from '../components/TaskForm';
 import Sidebar from '../components/Sidebar';
-import TaskList from '../components/TaskList';  // Make sure TaskList supports the three-column layout
+import TaskList from '../components/TaskList';
 import Modal from '../components/Modal';
 import { FaBars, FaPlus } from 'react-icons/fa';
 
@@ -103,6 +103,22 @@ export default function HomePage() {
     setIsTaskFormModalOpen(true);
   };
 
+  const handleDeleteTask = async (taskId) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      fetchTasks();
+      setSuccessMessage('Task deleted successfully!');
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      setErrorMessage('Failed to delete task. Please try again.');
+      setTimeout(() => setErrorMessage(''), 5000);
+    }
+  };
+
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
   };
@@ -154,26 +170,26 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               <div className="bg-gray-50 p-4 rounded-lg shadow-md">
                 <h3 className="text-lg font-bold mb-2">To Do</h3>
-                <TaskList tasks={filteredTasks.filter(task => task.status === 'To Do')} onEdit={handleEditTask} />
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'To Do')} onEdit={handleEditTask} onDelete={handleDeleteTask} />
               </div>
               <div className="bg-gray-50 p-4 rounded-lg shadow-md">
                 <h3 className="text-lg font-bold mb-2">In Progress</h3>
-                <TaskList tasks={filteredTasks.filter(task => task.status === 'In Progress')} onEdit={handleEditTask} />
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'In Progress')} onEdit={handleEditTask} onDelete={handleDeleteTask} />
               </div>
               <div className="bg-gray-50 p-4 rounded-lg shadow-md">
                 <h3 className="text-lg font-bold mb-2">Completed</h3>
-                <TaskList tasks={filteredTasks.filter(task => task.status === 'Completed')} onEdit={handleEditTask} />
+                <TaskList tasks={filteredTasks.filter(task => task.status === 'Completed')} onEdit={handleEditTask} onDelete={handleDeleteTask} />
               </div>
             </div>
           ) : (
-            <TaskList tasks={filteredTasks} onEdit={handleEditTask} />
+            <TaskList tasks={filteredTasks} onEdit={handleEditTask} handleDelete={handleDeleteTask} />
           )}
+
+          <Modal isOpen={isTaskFormModalOpen} onClose={() => setIsTaskFormModalOpen(false)}>
+            <TaskForm task={taskToEdit} onSubmit={handleTaskSubmit} />
+          </Modal>
         </div>
       </div>
-
-      <Modal isOpen={isTaskFormModalOpen} onClose={() => setIsTaskFormModalOpen(false)}>
-        <TaskForm onSubmit={handleTaskSubmit} task={taskToEdit} />
-      </Modal>
     </div>
   );
 }

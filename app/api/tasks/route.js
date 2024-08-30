@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../lib/authOptions'; // Ensure this file exists and exports authOptions
@@ -91,3 +91,5 @@ export async function PUT(request) {
     return createResponse({ error: 'Failed to update task' }, 500);
   }
 }
+
+ 
